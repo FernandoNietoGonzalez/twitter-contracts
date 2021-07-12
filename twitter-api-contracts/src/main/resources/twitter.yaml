@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Twitter
+  description: 'Twitter API'
+  version: '1.0.0'
+  contact:
+    email: fernando_n_g@hotmail.com
+paths:
+  /tweets:
+    get:
+      summary: 'Return a page of filtered tweets.'
+      parameters:
+        - name: page_size
+          in: query
+          description: 'Page size.'
+          required: true
+          schema:
+            type: integer
+        - name: page_number
+          in: query
+          description: 'Page number.'
+          required: true
+          schema:
+            type: integer
+        - name: user_name
+          in: query
+          description: 'User id.'
+          required: false
+          schema:
+            type: string
+        - name: validated
+          in: query
+          description: 'Validated.'
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tweet_api_dto'
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+        500:
+          description: Unexpected error
+
+
+
+  /tweets/{tweet_id}/validate:
+    put:
+      summary: 'Validate a tweet'
+      operationId: tweet
+      parameters:
+        - name: tweet_id
+          in: path
+          description: 'Tweet code'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Contain the content request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_tweet_api_dto'
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/json: { }
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+        500:
+          description: Unexpected error
+
+  /hashtag:
+    get:
+      summary: 'Return a page of filtered hashtag.'
+      parameters:
+        - name: page_size
+          in: query
+          description: 'Page size.'
+          required: false
+          schema:
+            type: integer
+        - name: page_number
+          in: query
+          description: 'Page number.'
+          required: false
+          schema:
+            type: integer
+        - name: 'order_by'
+          description: 'Order by'
+          in: query
+          schema:
+            type: string
+            enum: [ counter ]
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/hashtag_api_dto'
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+        500:
+          description: Unexpected error
+
+
+
+components:
+  schemas:
+    tweet_api_dto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'Id'
+          format: int64
+        origin_id:
+          type: integer
+          format: int64
+          description: 'Origin id.'
+        created_at:
+          type: string
+          format: date-time
+          description: 'Creation date'
+        text:
+          type: string
+          description: 'Text.'
+        language:
+          type: string
+          description: 'Language.'
+        location:
+          type: string
+          description: 'Location.'
+        user_name:
+          type: string
+          description: 'User name.'
+        validated:
+          type: boolean
+          description: 'Validated tweet.'
+
+
+
+    update_tweet_api_dto:
+      type: object
+      properties:
+        validated:
+          type: boolean
+          description: 'Validated tweet.'
+
+
+
+    hashtag_api_dto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'Id.'
+          format: int64
+        text:
+          type: string
+          description: 'Text.'
+        counter:
+          type: integer
+          description: 'Counter.'
